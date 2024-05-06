@@ -1,13 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<title>My first three.js app</title>
-		<style>
-			body { margin: 0; }
-		</style>
-	</head>
-	<body>
-		<script type="module" src="/main.js"></script>
-	</body>
+
+<head>
+    <meta charset="utf-8">
+    <title>Test task</title>
+    <style>
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <form onsubmit="saveToken(event);">
+        <label>
+            Refresh Token
+        </label>
+        <textarea id="rt"></textarea>
+        <button>OK</button>
+    </form>
+    <script>
+        const rt = document.querySelector('#rt')
+        async function saveToken(e) {
+            e.preventDefault()
+            const refreshTokenEncoded = encodeURIComponent(rt.value)
+            const response = await fetch(`http://bridge-it.ru:5000/api/v1/refresh?refreshToken=${refreshTokenEncoded}`)
+            if (!response.ok) return
+            const data = await response.json()
+            localStorage.setItem("token", data.token.token)
+            location.href = "./select.html"
+        }
+    </script>
+</body>
+
 </html>
