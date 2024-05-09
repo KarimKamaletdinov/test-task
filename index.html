@@ -8,6 +8,32 @@
         body {
             margin: 0;
         }
+
+        form {
+            width: 200px;
+            margin: 100px auto;
+            background-color: antiquewhite;
+            border: 2px solid coral;
+            border-radius: 15px;
+            padding: 20px;
+            display: grid;
+            gap: 10px;
+        }
+
+        label {
+            text-align: center;
+        }
+
+        label,
+        select,
+        button {
+            font-size: 15px;
+            height: 25px;
+        }
+
+        textarea {
+            height: 200px;
+        }
     </style>
 </head>
 
@@ -21,6 +47,10 @@
     </form>
     <script>
         const rt = document.querySelector('#rt')
+        const token = localStorage.getItem("token")
+        if (token) {
+            rt.value = token
+        }
         async function saveToken(e) {
             e.preventDefault()
             const refreshTokenEncoded = encodeURIComponent(rt.value)

@@ -8,6 +8,28 @@
         body {
             margin: 0;
         }
+
+        form {
+            width: 200px;
+            margin: 100px auto;
+            background-color: antiquewhite;
+            border: 2px solid coral;
+            border-radius: 15px;
+            padding: 20px;
+            display: grid;
+            gap: 10px;
+        }
+
+        label {
+            text-align: center;
+        }
+
+        label,
+        select,
+        button {
+            font-size: 15px;
+            height: 25px;
+        }
     </style>
 </head>
 
@@ -19,7 +41,7 @@
         <select id="model" name="model">
             <option value="small">small</option>
             <option value="big">big</option>
-            <option value="biggest">bigest</option>
+            <option value="biggest">biggest</option>
         </select>
         <button>OK</button>
     </form>
