@@ -37,23 +37,23 @@ function addMaterial(component, material) {
     // geometry.setIndex()
     // geometry.computeVertexNormals()
 
-    const c = material.Color
+    const c = material.color
     new Mesh(viewer.scene, {
         geometry: new VBOGeometry(viewer.scene, {
             primitive: "triangles",
-            positions: component.Geometry.Points.flatMap(x => [x.X, x.Y, x.Z]),
-            indices: component.Geometry.Indices.slice(material.Start, material.Start + material.Count),
-            normals: component.Geometry.Normals
+            positions: component.geometry.points.flatMap(x => [x.x, x.y, x.z]),
+            indices: component.geometry.indices.slice(material.start, material.start + material.count),
+            normals: component.geometry.normals
         }),
         material: new LambertMaterial(viewer.scene, {
-            color: [c.R, c.G, c.B],
+            color: [c.r, c.g, c.b],
             backfaces: false,
         })
     })
 }
 
 function addComponent(component) {
-    for (const material of component.Geometry.Materials) {
+    for (const material of component.geometry.materials) {
         addMaterial(component, material)
     }
 }
@@ -69,13 +69,13 @@ async function decompress(blob) {
 }
 
 async function addComponentType(model, componentType) {
-    const response = await fetch(`http://185.177.216.241:5047/model/componentsGeometry/zip?modelName=${model}&componentTypeName=${componentType}`, {
+    const response = await fetch(`http://185.177.216.241:5047/model/components?modelName=${model}&componentTypeName=${componentType}`, {
         headers: HEADERS,
     })
     if (response.status != 200) {
         return
     }
-    const data = JSON.parse(await decompress(await response.blob()))
+    const data = await response.json()
     for (const component of data) {
         addComponent(component)
     }
@@ -90,5 +90,9 @@ async function addModel(model) {
     await Promise.all(componentTypes.map(x => addComponentType(model, x)))
 }
 const params = new URLSearchParams(location.search)
-addModel(params.get("model"))
+const startTime = performance.now()
+addModel(params.get("model")).then(() => {
+    const endTime = performance.now()
+    console.log("FINISHED. DURATION: " + (endTime - startTime) / 1000 + "s")
+})
 console.log(viewer.scene)
