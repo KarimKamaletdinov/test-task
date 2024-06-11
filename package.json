@@ -12,6 +12,7 @@
     "vite": "^5.2.0"
   },
   "dependencies": {
-    "three": "^0.164.1"
+    "@xeokit/xeokit-sdk": "^2.6.17",
+    "@zip.js/zip.js": "^2.7.45"
   }
 }
