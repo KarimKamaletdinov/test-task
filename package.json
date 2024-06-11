@@ -12,6 +12,7 @@
     "vite": "^5.2.0"
   },
   "dependencies": {
+    "@zip.js/zip.js": "^2.7.45",
     "three": "^0.164.1"
   }
 }
