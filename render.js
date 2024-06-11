@@ -1,12 +1,5 @@
-import { Mesh, Viewer, VBOGeometry, LambertMaterial } from "@xeokit/xeokit-sdk"
-import {
-    BlobReader,
-    BlobWriter,
-    TextReader,
-    TextWriter,
-    ZipReader,
-    ZipWriter,
-} from "@zip.js/zip.js"
+import { Mesh, Viewer, VBOGeometry, LambertMaterial, FastNavPlugin } from "@xeokit/xeokit-sdk"
+import { BlobReader, TextWriter, ZipReader } from "@zip.js/zip.js"
 
 const AUTH = `Bearer ${localStorage.getItem("token")}`
 const HEADERS = {
@@ -25,18 +18,20 @@ viewer.camera.eye = [-3.933, 2.855, 27.018]
 viewer.camera.look = [0, 0, 0]
 viewer.camera.up = [-0.018, 0.999, 0.039]
 
+const fastNavPlugin = new FastNavPlugin(viewer, {
+    hideEdges: true,
+    hideSAO: true,
+    hideColorTexture: true,
+    hidePBR: true,
+    hideTransparentObjects: false,
+    scaleCanvasResolution: true,
+    defaultScaleCanvasResolutionFactor: 1.0,
+    scaleCanvasResolutionFactor: 0.5,
+    delayBeforeRestore: true,
+    delayBeforeRestoreSeconds: 0.4
+})
+
 function addMaterial(component, material) {
-    // const c = material.color
-    // const m = new THREE.MeshBasicMaterial({
-    //     side: THREE.FrontSide,
-    //     color: new THREE.Color(c.r, c.g, c.b)
-    // })
-    // const geometry = new THREE.BufferGeometry()
-
-    // geometry.setFromPoints()
-    // geometry.setIndex()
-    // geometry.computeVertexNormals()
-
     const c = material.Color
     new Mesh(viewer.scene, {
         geometry: new VBOGeometry(viewer.scene, {
@@ -68,6 +63,8 @@ async function decompress(blob) {
     return text
 }
 
+const ZIP = true
+
 async function addComponentType(model, componentType) {
     const response = await fetch(`http://185.177.216.241:5047/model/componentsGeometry/zip?modelName=${model}&componentTypeName=${componentType}`, {
         headers: HEADERS,
@@ -90,5 +87,9 @@ async function addModel(model) {
     await Promise.all(componentTypes.map(x => addComponentType(model, x)))
 }
 const params = new URLSearchParams(location.search)
-addModel(params.get("model"))
+const startTime = performance.now()
+addModel(params.get("model")).then(() => {
+    const endTime = performance.now()
+    console.log("FINISHED. DURATION: " + (endTime - startTime) / 1000 + "s")
+})
 console.log(viewer.scene)

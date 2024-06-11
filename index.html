@@ -47,9 +47,9 @@
     </form>
     <script>
         const rt = document.querySelector('#rt')
-        const token = localStorage.getItem("token")
-        if (token) {
-            rt.value = token
+        const refreshToken = localStorage.getItem("token")
+        if (refreshToken) {
+            rt.value = refreshToken
         }
         async function saveToken(e) {
             e.preventDefault()
@@ -58,6 +58,7 @@
             if (!response.ok) return
             const data = await response.json()
             localStorage.setItem("token", data.token.token)
+            localStorage.setItem("refreshToken", rt.value)
             location.href = "./select.html"
         }
     </script>
