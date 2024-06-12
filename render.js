@@ -1,4 +1,4 @@
-import { Mesh, Viewer, VBOGeometry, LambertMaterial, FastNavPlugin, WebIFCLoaderPlugin } from "@xeokit/xeokit-sdk"
+import { Mesh, Viewer, VBOGeometry, LambertMaterial, FastNavPlugin, XKTLoaderPlugin, } from "@xeokit/xeokit-sdk"
 import * as WebIFC from 'web-ifc'
 import { BlobReader, TextWriter, ZipReader } from "@zip.js/zip.js"
 import Stats from 'stats.js'
@@ -117,15 +117,12 @@ const upload = document.querySelector("input")
 upload.addEventListener("change", async () => {
     const file = await upload.files[0].arrayBuffer()
 
-    const IfcAPI = new WebIFC.IfcAPI()
-    IfcAPI.SetWasmPath("https://cdn.jsdelivr.net/npm/web-ifc@0.0.51/")
+    // const IfcAPI = new WebIFC.IfcAPI()
+    // IfcAPI.SetWasmPath("https://cdn.jsdelivr.net/npm/web-ifc@0.0.51/")
 
-    await IfcAPI.Init()
+    // await IfcAPI.Init()
 
-    const ifcLoader = new WebIFCLoaderPlugin(viewer, {
-        WebIFC,
-        IfcAPI
-    })
+    const ifcLoader = new XKTLoaderPlugin(viewer)
 
     const sceneModel = ifcLoader.load({
         id: "myModel",
@@ -133,7 +130,7 @@ upload.addEventListener("change", async () => {
         excludeTypes: ["IfcSpace"],
         edges: true,
         dtxEnabled: true,
-        ifc: file
+        xkt: file
     })
 
     sceneModel.on("loaded", () => {
