@@ -13,6 +13,9 @@
   },
   "dependencies": {
     "@xeokit/xeokit-sdk": "^2.6.17",
-    "@zip.js/zip.js": "^2.7.45"
+    "@zip.js/zip.js": "^2.7.45",
+    "stats": "^1.0.0",
+    "stats.js": "^0.17.0",
+    "web-ifc": "^0.0.54"
   }
 }
