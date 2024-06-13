@@ -54,7 +54,7 @@
         async function saveToken(e) {
             e.preventDefault()
             const refreshTokenEncoded = encodeURIComponent(rt.value)
-            const response = await fetch(`http://bridge-it.ru:5000/api/v1/refresh?refreshToken=${refreshTokenEncoded}`)
+            const response = await fetch(`http://bridge-it.ru:5000/api/v1/refresh?refreshToken=${rt.value}`)
             if (!response.ok) return
             const data = await response.json()
             localStorage.setItem("token", data.token.token)
