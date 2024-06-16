@@ -1,6 +1,8 @@
 import * as THREE from 'three'
 import { FlyControls } from 'three/addons/controls/FlyControls.js'
 import { BlobReader, TextWriter, ZipReader } from "@zip.js/zip.js"
+import { GLTFLoader, DRACOLoader, OrbitControls, KTX2Loader } from 'three/examples/jsm/Addons.js'
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js'
 
 const AUTH = `Bearer ${localStorage.getItem("token")}`
 const HEADERS = {
@@ -9,6 +11,7 @@ const HEADERS = {
 }
 
 const scene = new THREE.Scene()
+scene.add(new THREE.AmbientLight())
 
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100)
 camera.position.set(-1.6, 2, 0)
@@ -23,7 +26,7 @@ window.addEventListener('resize', function () {
     renderer.setSize(window.innerWidth, window.innerHeight)
 })
 
-const controls = new FlyControls(camera, renderer.domElement)
+const controls = new OrbitControls(camera, renderer.domElement)
 controls.movementSpeed = 1
 controls.rollSpeed = 0.25
 scene.add(new THREE.AxesHelper(100))
@@ -91,9 +94,22 @@ async function addModel(model) {
     await Promise.all(componentTypes.map(x => addComponentType(model, x)))
     console.log("FINISH")
 }
-const params = new URLSearchParams(location.search)
-const startTime = performance.now()
-addModel(params.get("model")).then(() => {
-    const endTime = performance.now()
-    console.log("FINISHED. DURATION: " + (endTime - startTime) / 1000 + "s")
-}).then(animate)
+animate()
+
+const upload = document.querySelector("input")
+upload.addEventListener("change", () => {
+    const url = URL.createObjectURL(upload.files[0])
+    const MANAGER = new THREE.LoadingManager()
+    const loader = new GLTFLoader(MANAGER)
+    const dracoLoader = new DRACOLoader(MANAGER)
+    const THREE_PATH = `https://unpkg.com/three@0.${THREE.REVISION}.x`
+    dracoLoader.setDecoderPath(`${THREE_PATH}/examples/jsm/libs/draco/gltf/`)
+    loader.setDRACOLoader(dracoLoader)
+    const kt = new KTX2Loader(MANAGER).setTranscoderPath(
+        `${THREE_PATH}/examples/jsm/libs/basis/`)
+    loader.setMeshoptDecoder(MeshoptDecoder)
+    loader.setKTX2Loader(kt.detectSupport(renderer))
+    loader.load(url, gltf => {
+        scene.add(gltf.scene)
+    })
+})
